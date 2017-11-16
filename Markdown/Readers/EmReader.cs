@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 namespace Markdown.Readers
 {
-    class EmReader : IReader
+    class EmReader : Reader
     {
         private readonly Stack<int> leftBoards = new Stack<int>();
         private readonly List<Token> tokens;
         private readonly Lexer lexer;
 
-        public bool IsActive { get; set; } 
+        public override bool IsActive { get; set; } 
 
         public EmReader(List<Token> tokens, Lexer lexer)
         {
@@ -18,11 +18,18 @@ namespace Markdown.Readers
             this.lexer = lexer;
         }
 
+
+
+        
+
         private bool IsStartState(int index, string str)
         {
-            return (str[index] == '_' && (index > 0 && str[index - 1] != '\\' && str[index - 1] != '_'  || index == 0)) &&
-                   (index != str.Length - 1) &&
-                   (!(str[index + 1] == ' ' || str[index + 1] == '_' || Char.IsDigit(str[index + 1])))
+            return (str[index] == '_' && (!Screened(index, str) 
+                && !UnderScoreBeforeSymbol(index, str) || index == 0)) &&
+                   !EndOfString(index, str) &&
+                   (!(WhiteSpaceAfterSymbol(index, str)
+                   || UnderScoreAfterSymbol(index, str)
+                   || Char.IsDigit(str[index + 1])))
                    && (leftBoards.Count == 0 || !IsFinalState(index, str));
         }
 
@@ -45,7 +52,7 @@ namespace Markdown.Readers
         }
         
 
-        public void ReadChar(int index, string str)
+        public override void ReadChar(int index, string str)
         {
 
             if (IsStartState(index, str))

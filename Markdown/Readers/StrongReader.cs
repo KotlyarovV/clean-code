@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 namespace Markdown.Readers
 {
-    class StrongReader : IReader
+    class StrongReader : Reader
     {
         private readonly Stack<int> leftBoards = new Stack<int>();
         private readonly List<Token> tokens;
         private readonly Lexer lexer;
 
-        public bool IsActive { get; set; }
+        public override bool IsActive { get; set; }
 
 
         public StrongReader(List<Token> tokens, Lexer lexer)
@@ -36,7 +36,7 @@ namespace Markdown.Readers
 
 
 
-        public void ReadChar(int index, string str)
+        public override void ReadChar(int index, string str)
         {
             if (IsStartState(index, str))
             {

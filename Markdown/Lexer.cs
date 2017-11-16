@@ -8,7 +8,7 @@ namespace Markdown
     class Lexer
     {
 
-        private readonly List<IReader> readers = new List<IReader>();
+        private readonly List<Reader> readers = new List<Reader>();
         private readonly string text;
 
         public readonly EmReader EmReader;
