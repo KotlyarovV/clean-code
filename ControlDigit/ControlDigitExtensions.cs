@@ -26,11 +26,36 @@ namespace ControlDigit
 			return result;
 		}
 
-		public static int ControlDigit2(this long number)
-		{
-			throw new NotImplementedException();
+	    private static int GetHashSumLong(long number)
+	    {
+	        int hashSum = 0;
+	        int factor = 1;
+
+	        do
+	        {
+	            int lastDigit = (int)(number % 10);
+	            hashSum += factor * lastDigit;
+	            factor = (factor == 1) ? 3 : 1;
+	            number /= 10;
+	        }
+	        while (number > 0);
+
+	        return hashSum;
+	    }
+
+	    private static int ControlDigitOfHash(int hashSum)
+	    {
+	        int controlDigit = hashSum % 11;
+	        return (controlDigit == 10) ? 1 : controlDigit;
+	    }
+
+        public static int ControlDigit2(this long number)
+        {
+            int hashSum = GetHashSumLong(number);
+            int hashControlDigit = ControlDigitOfHash(hashSum);
+		    return hashControlDigit;
 		}
-	}
+    }
 
 	[TestFixture]
 	public class ControlDigitExtensions_Tests
