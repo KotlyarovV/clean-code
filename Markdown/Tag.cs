@@ -21,11 +21,11 @@ namespace Markdown
             { TokenType.EmTag, "<em>"},
             { TokenType.StrongTag, "<strong>"}
         };
-
+ 
         private static readonly Dictionary<TokenType, int> lengthOfMardownRepresentation = 
             new Dictionary<TokenType, int>()
         {
-            { TokenType.EmTag, 1},
+            { TokenType.EmTag, 1}, // можно не хардкодить значения, а вычислять
             { TokenType.StrongTag, 2}
         };
 

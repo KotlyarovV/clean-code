@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Markdown.Readers
 {
+    // протестировать бы, а то столько условий. вдруг баг
     class EmReader : Reader
     {
         private readonly Stack<int> leftBoards = new Stack<int>();
@@ -20,21 +21,20 @@ namespace Markdown.Readers
 
         private bool IsStartState(int index, string str)
         {
-            return (str[index] == '_' && (!Screened(index, str) 
-                && !UnderScoreBeforeSymbol(index, str) || index == 0)) &&
-                   !EndOfString(index, str) &&
-                   (!(WhiteSpaceAfterSymbol(index, str)
-                   || UnderScoreAfterSymbol(index, str)
-                   || Char.IsDigit(str[index + 1])))
+            return str[index] == '_' 
+                   && (!Screened(index, str) 
+                   && !UnderScoreBeforeSymbol(index, str) || index == 0) 
+                   && !EndOfString(index, str) 
+                   && !(WhiteSpaceAfterSymbol(index, str) || UnderScoreAfterSymbol(index, str) || char.IsDigit(str[index + 1]))
                    && (leftBoards.Count == 0 || !IsFinalState(index, str));
         }
 
         private bool IsFinalState(int index, string str)
         {
-            return (leftBoards.Count != 0 && str[index] == '_'  && 
-                !WhiteSpaceBeforeSymbol(index, str) &&
-                !UnderScoreBeforeSymbol(index, str)) &&
-                (index == str.Length - 1 || (!(UnderScoreAfterSymbol(index, str) && lexer.StrongReader.IsActive)));
+            return leftBoards.Count != 0 && str[index] == '_'  
+                   && !WhiteSpaceBeforeSymbol(index, str)
+                   && !UnderScoreBeforeSymbol(index, str) 
+                   && (index == str.Length - 1 || !(UnderScoreAfterSymbol(index, str) && lexer.StrongReader.IsActive));
         }
 
         private void AddNewToken(Token token)
@@ -43,7 +43,7 @@ namespace Markdown.Readers
             while (i >= 0 && tokens[i].Start >= token.Start)
             {
                 if (tokens[i].Type == TokenType.StrongTag) 
-                    tokens.RemoveAt(i);
+                    tokens.RemoveAt(i); // O(n). Придумай пример, когда это будет тормозить твой алгоритм. 
                 i--;
             }
             tokens.Add(token);

@@ -12,6 +12,7 @@ namespace Markdown
 		}
 	}
 
+    // Вынести в отдельную папку с тестами
 	[TestFixture]
 	public class Md_ShouldRender
 	{
@@ -23,6 +24,8 @@ namespace Markdown
 	        md = new Md();
 	    }
 
+	    
+	    // зачем столько тестовых методов, если тело у них идентичное?
 	    [Test]
 	    public void OneUnderscore_TagEmAdded()
 	    {
@@ -83,10 +86,10 @@ namespace Markdown
 	        Assert.AreEqual("<em>a __b__ b</em>", md.RenderToHtml("_a __b__ b_"));
 	    }
 
-	    [Test]
+	    [Test] // кейс на экранирование __ не работает
 	    public void ScreenedUnderscores_UnderscoresIsScreened()
 	    {
-	        Assert.AreEqual("_a_", md.RenderToHtml(@"\_a\_"));
+	        Assert.AreEqual("__a__", md.RenderToHtml(@"\__a\__"));
 	    }
     }
 }

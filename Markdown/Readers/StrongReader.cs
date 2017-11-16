@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Markdown.Readers
 {
+    // тесты
     class StrongReader : Reader
     {
         private readonly Stack<int> leftBoards = new Stack<int>();

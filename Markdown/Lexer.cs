@@ -5,6 +5,7 @@ using Markdown.Readers;
 
 namespace Markdown
 {
+    // жаль тестов нет на этот класс
     class Lexer
     {
 
@@ -17,6 +18,7 @@ namespace Markdown
 
         public Lexer(string text)
         {
+            // Lexer использует EmReader, а EmReader использует Lexer
             EmReader = new EmReader(tokens, this);
             StrongReader = new StrongReader(tokens, this);
 
@@ -26,8 +28,10 @@ namespace Markdown
             this.text = text;
         }
 
+        // может IsEscapeSymbol? 
         public bool ScreeningSymbol(int i, string str) => i < str.Length - 1 && str[i] == '\\' && str[i + 1] == '_';
 
+        // Метод вроде Get, а вроде и void :(
         public void GetTokens()
         {
             for (int i = 0; i < text.Length; i++)
@@ -48,20 +52,26 @@ namespace Markdown
             var tags = GetTags();
 
             var newString = new StringBuilder();
-            var tagsEnumerator =  tags.GetEnumerator();
+            var tagsEnumerator =  tags.GetEnumerator(); // Enumerator need to be Disposed
             tagsEnumerator.MoveNext();
 
             for (var i = 0; i < text.Length; i++)
             {
-                if (ScreeningSymbol(i, text)) continue;
+                if (ScreeningSymbol(i, text)) 
+                    continue;
+
+                // этот код нужно упростить
                 if (tagsEnumerator.Current != null  && i == tagsEnumerator.Current.Index)
                 while (i == tagsEnumerator.Current.Index)
                 {
                     newString.Append(tagsEnumerator.Current.TextRepresentation);
                     i = i - 1 + tagsEnumerator.Current.LengthOfMardownRepresentation;
-                    if (!tagsEnumerator.MoveNext()) break;        
+                    
+                    if (!tagsEnumerator.MoveNext()) 
+                        break;        
                 }
-                else newString.Append(text[i]);       
+                else 
+                    newString.Append(text[i]);       
             }
 
             return newString.ToString();
