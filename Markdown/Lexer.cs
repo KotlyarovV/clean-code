@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Markdown.Readers;
 
 namespace Markdown
@@ -10,7 +8,7 @@ namespace Markdown
     class Lexer
     {
 
-        private readonly List<Reader> readers = new List<Reader>();
+        private readonly List<IReader> readers = new List<IReader>();
         private readonly string text;
 
         public readonly EmReader EmReader;
@@ -53,7 +51,7 @@ namespace Markdown
                 var tags = GetTags();
 
                 var newString = new StringBuilder();
-                var tagsEnumerator = tags.GetEnumerator();
+                var tagsEnumerator =  tags.GetEnumerator();
                 tagsEnumerator.MoveNext();
 
                 for (var i = 0; i < text.Length; i++)
@@ -61,7 +59,7 @@ namespace Markdown
                     if (i == tagsEnumerator.Current.Index)
                         while (i == tagsEnumerator.Current.Index)
                         {
-                            newString.Append(tagsEnumerator.Current.TextRepresentation());
+                            newString.Append(tagsEnumerator.Current.TextRepresentation);
                             i = i - 1 + tagsEnumerator.Current.LengthOfMardownRepresentation;
                             if (!tagsEnumerator.MoveNext()) break;
                             

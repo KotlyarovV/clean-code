@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Markdown
+﻿namespace Markdown
 {
     public enum TokenType
     {
-        NonSpesialText,
         EmTag,
         StrongTag
     }
@@ -21,9 +14,9 @@ namespace Markdown
 
         public Token(TokenType type, int start, int end)
         {
-            this.End = end;
-            this.Start = start;
-            this.Type = type;
+            End = end;
+            Start = start;
+            Type = type;
         }
     }
 }

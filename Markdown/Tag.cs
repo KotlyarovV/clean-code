@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+
 
 namespace Markdown
 {
@@ -15,34 +11,36 @@ namespace Markdown
 
     class Tag
     {
-        public readonly TokenType TokenType;
+        private readonly TokenType tokenType;
         public readonly int Index;
-        public readonly TagType TagType;
+        private readonly TagType tagType;
 
-        private static Dictionary<TokenType, string> stringRepresentation = new Dictionary<TokenType, string>
+        private static readonly Dictionary<TokenType, string> stringRepresentation = 
+            new Dictionary<TokenType, string>
         {
             { TokenType.EmTag, "<em>"},
             { TokenType.StrongTag, "<strong>"}
         };
 
-        private static Dictionary<TokenType, int> lengthOfMardownRepresentation = new Dictionary<TokenType, int>()
+        private static readonly Dictionary<TokenType, int> lengthOfMardownRepresentation = 
+            new Dictionary<TokenType, int>()
         {
             { TokenType.EmTag, 1},
             { TokenType.StrongTag, 2}
         };
 
-        public int LengthOfMardownRepresentation => lengthOfMardownRepresentation[TokenType];
+        public int LengthOfMardownRepresentation => lengthOfMardownRepresentation[tokenType];
 
-        public string TextRepresentation() =>
-            (TagType == TagType.Opened)
-                ? stringRepresentation[TokenType]
-                : stringRepresentation[TokenType][0] + "/" + stringRepresentation[TokenType].Substring(1);
+        public string TextRepresentation =>
+            (tagType == TagType.Opened)
+                ? stringRepresentation[tokenType]
+                : stringRepresentation[tokenType][0] + "/" + stringRepresentation[tokenType].Substring(1);
 
         public Tag(int index, TokenType tokenType, TagType tagType)
         {
             Index = index;
-            TokenType = tokenType;
-            TagType = tagType;
+            this.tokenType = tokenType;
+            this.tagType = tagType;
         }
 
     }

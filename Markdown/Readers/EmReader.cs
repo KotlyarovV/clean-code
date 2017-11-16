@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Markdown.Readers
 {
-    class EmReader : Reader
+    class EmReader : IReader
     {
         private readonly Stack<int> leftBoards = new Stack<int>();
         private readonly List<Token> tokens;
         private readonly Lexer lexer;
 
-        public bool IsActive { get; set; } = false;
+        public bool IsActive { get; set; } 
 
         public EmReader(List<Token> tokens, Lexer lexer)
         {
