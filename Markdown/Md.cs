@@ -82,5 +82,11 @@ namespace Markdown
 	    {
 	        Assert.AreEqual("<em>a __b__ b</em>", md.RenderToHtml("_a __b__ b_"));
 	    }
+
+	    [Test]
+	    public void ScreenedUnderscores_UnderscoresIsScreened()
+	    {
+	        Assert.AreEqual("_a_", md.RenderToHtml(@"\_a\_"));
+	    }
     }
 }

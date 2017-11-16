@@ -26,6 +26,7 @@ namespace Markdown
             this.text = text;
         }
 
+        public bool ScreeningSymbol(int i, string str) => i < str.Length - 1 && str[i] == '\\' && str[i + 1] == '_';
 
         public void GetTokens()
         {
@@ -44,31 +45,26 @@ namespace Markdown
 
         public string GetFinalString()
         {
-            if (tokens.Count == 0)
-                return text;
-            else
+            var tags = GetTags();
+
+            var newString = new StringBuilder();
+            var tagsEnumerator =  tags.GetEnumerator();
+            tagsEnumerator.MoveNext();
+
+            for (var i = 0; i < text.Length; i++)
             {
-                var tags = GetTags();
-
-                var newString = new StringBuilder();
-                var tagsEnumerator =  tags.GetEnumerator();
-                tagsEnumerator.MoveNext();
-
-                for (var i = 0; i < text.Length; i++)
+                if (ScreeningSymbol(i, text)) continue;
+                if (tagsEnumerator.Current != null  && i == tagsEnumerator.Current.Index)
+                while (i == tagsEnumerator.Current.Index)
                 {
-                    if (i == tagsEnumerator.Current.Index)
-                        while (i == tagsEnumerator.Current.Index)
-                        {
-                            newString.Append(tagsEnumerator.Current.TextRepresentation);
-                            i = i - 1 + tagsEnumerator.Current.LengthOfMardownRepresentation;
-                            if (!tagsEnumerator.MoveNext()) break;
-                            
-                        }
-                    else newString.Append(text[i]);       
+                    newString.Append(tagsEnumerator.Current.TextRepresentation);
+                    i = i - 1 + tagsEnumerator.Current.LengthOfMardownRepresentation;
+                    if (!tagsEnumerator.MoveNext()) break;        
                 }
-
-                return newString.ToString();
+                else newString.Append(text[i]);       
             }
+
+            return newString.ToString();
         }
     }
 }

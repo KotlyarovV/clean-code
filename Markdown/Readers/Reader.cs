@@ -14,6 +14,8 @@ namespace Markdown.Readers
 
         protected bool WhiteSpaceAfterSymbol(int index, string str) => index < str.Length && str[index + 1] == ' ';
 
+        protected bool WhiteSpaceBeforeSymbol(int index, string str) => index >= 1 && str[index - 1] == ' ';
+
         protected bool EndOfString(int index, string str) => index == str.Length - 1;
     }
 }

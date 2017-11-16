@@ -18,10 +18,6 @@ namespace Markdown.Readers
             this.lexer = lexer;
         }
 
-
-
-        
-
         private bool IsStartState(int index, string str)
         {
             return (str[index] == '_' && (!Screened(index, str) 
@@ -35,13 +31,15 @@ namespace Markdown.Readers
 
         private bool IsFinalState(int index, string str)
         {
-            return (leftBoards.Count != 0 && str[index] == '_'  && str[index - 1] != ' ' && str[index - 1] != '_') &&
-                (index == str.Length - 1 || (!(str[index + 1] == '_' && lexer.StrongReader.IsActive)));
+            return (leftBoards.Count != 0 && str[index] == '_'  && 
+                !WhiteSpaceBeforeSymbol(index, str) &&
+                !UnderScoreBeforeSymbol(index, str)) &&
+                (index == str.Length - 1 || (!(UnderScoreAfterSymbol(index, str) && lexer.StrongReader.IsActive)));
         }
 
         private void AddNewToken(Token token)
         {
-            int i = tokens.Count - 1;
+            var i = tokens.Count - 1;
             while (i >= 0 && tokens[i].Start >= token.Start)
             {
                 if (tokens[i].Type == TokenType.StrongTag) 
