@@ -21,24 +21,23 @@ namespace Markdown.Readers
 
         private bool IsStartState(int index, string str)
         {
-            var startState = index + 2 < str.Length && str[index] == '_' && 
-                UnderScoreAfterSymbol(index, str) &&
-                (!Screened(index, str) || index == 0) &&
-                   (!(WhiteSpaceAfterSymbol(index + 1, str) || 
-                   UnderScoreAfterSymbol(index + 1, str) || 
-                   Char.IsDigit(str[index + 2])))
-                   && (leftBoards.Count == 0 || !IsFinalState(index, str));
+            var startState = index + 2 < str.Length && str[index] == '_' 
+                && UnderScoreAfterSymbol(index, str) 
+                && (!Screened(index, str) || index == 0) 
+                && (!(WhiteSpaceAfterSymbol(index + 1, str) 
+                || UnderScoreAfterSymbol(index + 1, str)
+                || char.IsDigit(str[index + 2])))
+                && (leftBoards.Count == 0 || !IsFinalState(index, str));
             return startState;
         }
 
         private bool IsFinalState(int index, string str)
         {
-            return index + 1 < str.Length && str[index] == '_' && 
-                UnderScoreAfterSymbol(index, str) &&
-                   (!WhiteSpaceBeforeSymbol(index, str));
+            return  str[index] == '_' 
+                && index + 1 < str.Length 
+                && UnderScoreAfterSymbol(index, str) 
+                && (!WhiteSpaceBeforeSymbol(index, str));
         }
-
-
 
         public override void ReadChar(int index, string str)
         {
