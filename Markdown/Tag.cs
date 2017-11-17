@@ -11,9 +11,9 @@ namespace Markdown
 
     class Tag
     {
-        private readonly TokenType tokenType;
+        public readonly TokenType tokenType;
         public readonly int Index;
-        private readonly TagType tagType;
+        public readonly TagType tagType;
 
         private static readonly Dictionary<TokenType, string> stringRepresentation = 
             new Dictionary<TokenType, string>
@@ -22,14 +22,14 @@ namespace Markdown
             { TokenType.StrongTag, "<strong>"}
         };
 
-        private static readonly Dictionary<TokenType, int> lengthOfMardownRepresentation = 
-            new Dictionary<TokenType, int>()
+        private static readonly Dictionary<TokenType, string> mardownRepresentation = 
+            new Dictionary<TokenType, string>()
         {
-            { TokenType.EmTag, 1},
-            { TokenType.StrongTag, 2}
+            { TokenType.EmTag, "_"},
+            { TokenType.StrongTag, "__"}
         };
-
-        public int LengthOfMardownRepresentation => lengthOfMardownRepresentation[tokenType];
+        
+        public int LengthOfMardownRepresentation => mardownRepresentation[tokenType].Length;
 
         public string TextRepresentation =>
             (tagType == TagType.Opened)

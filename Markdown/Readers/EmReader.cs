@@ -6,66 +6,34 @@ namespace Markdown.Readers
 {
     class EmReader : Reader
     {
-        private readonly Stack<int> leftBoards = new Stack<int>();
-        private readonly List<Token> tokens;
-        private readonly Lexer lexer;
+        protected override TokenType TokenType { get; } = TokenType.EmTag;
 
-        public override bool IsActive { get; set; } 
+        protected sealed override List<Token> Tokens { get; set; }
 
-        public EmReader(List<Token> tokens, Lexer lexer)
+        private readonly StrongReader strongReader;
+
+        public EmReader(List<Token> tokens, StrongReader strongReader)
         {
-            this.tokens = tokens;
-            this.lexer = lexer;
+            Tokens = tokens;
+            this.strongReader = strongReader;
         }
 
-        private bool IsStartState(int index, string str)
+        public override bool IsStartState(int index, string str)
         {
             return (str[index] == '_' 
                 && (!Screened(index, str) 
-                && !UnderScoreBeforeSymbol(index, str) || index == 0)) 
+                && (!(SymbolBeforeIndex(index, str, '_') || DigitBeforeSymbol(index, str))) || index == 0)) 
                 && !EndOfString(index, str) 
-                &&(!(WhiteSpaceAfterSymbol(index, str) || UnderScoreAfterSymbol(index, str) || char.IsDigit(str[index + 1])))
-                && (leftBoards.Count == 0 || !IsFinalState(index, str));
+                &&(!(SymbolAfterIndex(index, str, ' ') || SymbolAfterIndex(index, str, '_') || char.IsDigit(str[index + 1])))
+                && (LeftBoards.Count == 0 || !IsFinalState(index, str));
         }
 
-        private bool IsFinalState(int index, string str)
+        public override bool IsFinalState(int index, string str)
         {
-            return (leftBoards.Count != 0 && str[index] == '_'  
-                && !WhiteSpaceBeforeSymbol(index, str) 
-                && !UnderScoreBeforeSymbol(index, str)) 
-                && (index == str.Length - 1 || (!(UnderScoreAfterSymbol(index, str) 
-                && lexer.StrongReader.IsActive)));
+            return (LeftBoards.Count != 0 && str[index] == '_'  
+                && !(SymbolBeforeIndex(index, str, ' ') || DigitBeforeSymbol(index, str)) 
+                && !SymbolBeforeIndex(index, str, '_')) 
+                && (index == str.Length - 1 || (!(SymbolAfterIndex(index, str, '_') && strongReader.IsActive)));                
         }
-
-        private void AddNewToken(Token token)
-        {
-            var i = tokens.Count - 1;
-            while (i >= 0 && tokens[i].Start >= token.Start)
-            {
-                if (tokens[i].Type == TokenType.StrongTag) 
-                    tokens.RemoveAt(i);
-                i--;
-            }
-            tokens.Add(token);
-        }
-        
-
-        public override void ReadChar(int index, string str)
-        {
-
-            if (IsStartState(index, str))
-            {
-                leftBoards.Push(index);
-                IsActive = true;
-            }
-
-            else if (IsFinalState(index, str))
-            {
-                AddNewToken(new Token(TokenType.EmTag, leftBoards.Pop(), index));
-                IsActive = false;
-            }
-            
-        }
-        
     }
 }

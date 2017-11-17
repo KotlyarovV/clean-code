@@ -6,53 +6,34 @@ namespace Markdown.Readers
 {
     class StrongReader : Reader
     {
-        private readonly Stack<int> leftBoards = new Stack<int>();
-        private readonly List<Token> tokens;
-        private readonly Lexer lexer;
+        protected override TokenType TokenType { get; } = TokenType.StrongTag;
 
-        public override bool IsActive { get; set; }
+        protected sealed override List<Token> Tokens { get; set; } 
+        
 
-
-        public StrongReader(List<Token> tokens, Lexer lexer)
+        public StrongReader(List<Token> tokens)
         {
-            this.tokens = tokens;
-            this.lexer = lexer;
+            Tokens = tokens;
         }
 
-        private bool IsStartState(int index, string str)
+        public override bool IsStartState(int index, string str)
         {
-            var startState = index + 2 < str.Length && str[index] == '_' 
-                && UnderScoreAfterSymbol(index, str) 
-                && (!Screened(index, str) || index == 0) 
-                && (!(WhiteSpaceAfterSymbol(index + 1, str) 
-                || UnderScoreAfterSymbol(index + 1, str)
+            return index + 2 < str.Length && str[index] == '_' 
+                && SymbolAfterIndex(index, str, '_') 
+                && (!(Screened(index, str) || DigitBeforeSymbol(index, str)) || index == 0) 
+                && (!(SymbolAfterIndex(index + 1, str, ' ') 
+                || SymbolAfterIndex(index + 1, str, '_')
                 || char.IsDigit(str[index + 2])))
-                && (leftBoards.Count == 0 || !IsFinalState(index, str));
-            return startState;
+                && (LeftBoards.Count == 0 || !IsFinalState(index, str));
         }
 
-        private bool IsFinalState(int index, string str)
+        public override bool IsFinalState(int index, string str)
         {
             return  str[index] == '_' 
                 && index + 1 < str.Length 
-                && UnderScoreAfterSymbol(index, str) 
-                && (!WhiteSpaceBeforeSymbol(index, str));
-        }
-
-        public override void ReadChar(int index, string str)
-        {
-            if (IsStartState(index, str))
-            {
-                leftBoards.Push(index);
-                IsActive = true;
-            }
-
-            else if (IsFinalState(index, str))
-            {
-                IsActive = false;
-                tokens.Add(new Token(TokenType.StrongTag, leftBoards.Pop(), index));
-            }
-
+                && SymbolAfterIndex(index, str, '_')
+                && (!SymbolBeforeIndex(index, str, ' '))
+                && LeftBoards.Count != 0;
         }
     }
 }

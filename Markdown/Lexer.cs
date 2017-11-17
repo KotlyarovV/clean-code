@@ -7,40 +7,63 @@ namespace Markdown
 {
     class Lexer
     {
-
         private readonly List<Reader> readers = new List<Reader>();
         private readonly string text;
-
-        public readonly EmReader EmReader;
-        public readonly StrongReader StrongReader;
         private readonly List<Token> tokens = new List<Token>();
 
         public Lexer(string text)
         {
-            EmReader = new EmReader(tokens, this);
-            StrongReader = new StrongReader(tokens, this);
+            var strongReader = new StrongReader(tokens);
+            var emReader = new EmReader(tokens, strongReader);
 
-            readers.Add(EmReader);
-            readers.Add(StrongReader);
+            readers.Add(emReader);
+            readers.Add(strongReader);
 
             this.text = text;
         }
 
-        public bool ScreeningSymbol(int i, string str) => i < str.Length - 1 && str[i] == '\\' && str[i + 1] == '_';
+        private bool IsEscapedSymbol(int i, string str) => 
+            i < str.Length - 1 && str[i] == '\\' && str[i + 1] == '_';
 
-        public void GetTokens()
+        public List<Token> FormedTokens()
         {
-            for (int i = 0; i < text.Length; i++)
+            for (var i = 0; i < text.Length; i++)
             {
                 readers.ForEach(reader => reader.ReadChar(i, text));
             }
+            return tokens;
         }
 
-        private IOrderedEnumerable<Tag> GetTags()
+        private IEnumerable<Tag> GetTags()
         {
             var openTags = tokens.Select(token => new Tag(token.Start, token.Type, TagType.Opened));
             var closedTags = tokens.Select(token => new Tag(token.End, token.Type, TagType.Closed));
-            return openTags.Concat(closedTags).OrderBy(tag => tag.Index);
+
+            var wasEmTag = false;
+            var wasNestedStrongTag = false;
+
+            return openTags
+                .Concat(closedTags)
+                .OrderBy(tag => tag.Index)
+                .Where((tag) =>
+                {
+                    if (tag.tokenType == TokenType.EmTag)
+                    {
+                        wasEmTag = tag.tagType == TagType.Opened;
+                        return true;
+                    }
+                    if (tag.tokenType == TokenType.StrongTag &&  wasEmTag)
+                    {
+                        wasNestedStrongTag = tag.tagType == TagType.Opened;
+                        return false;
+                    }
+                    if (tag.tokenType == TokenType.StrongTag && wasNestedStrongTag)
+                    {
+                        wasNestedStrongTag = false;
+                        return false;
+                    }
+                    return true;
+                });
         }
 
         public string GetFinalString()
@@ -49,17 +72,17 @@ namespace Markdown
 
             var newString = new StringBuilder();
             var tagsEnumerator =  tags.GetEnumerator();
-            tagsEnumerator.MoveNext();
-
+            var hasNext = tagsEnumerator.MoveNext();
+    
             for (var i = 0; i < text.Length; i++)
             {
-                if (ScreeningSymbol(i, text)) continue;
-                if (tagsEnumerator.Current != null  && i == tagsEnumerator.Current.Index)
-                while (i == tagsEnumerator.Current.Index)
+                if (IsEscapedSymbol(i, text)) continue;
+
+                if (hasNext && i == tagsEnumerator.Current.Index)
                 {
                     newString.Append(tagsEnumerator.Current.TextRepresentation);
                     i = i - 1 + tagsEnumerator.Current.LengthOfMardownRepresentation;
-                    if (!tagsEnumerator.MoveNext()) break;        
+                    hasNext = tagsEnumerator.MoveNext();
                 }
                 else newString.Append(text[i]);       
             }

@@ -49,11 +49,14 @@
   <ItemGroup>
     <Compile Include="Lexer.cs" />
     <Compile Include="Md.cs" />
+    <Compile Include="Tests\EmReaderShould.cs" />
+    <Compile Include="Tests\MdShould.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Readers\EmReader.cs" />
     <Compile Include="Readers\Reader.cs" />
     <Compile Include="Readers\StrongReader.cs" />
     <Compile Include="Tag.cs" />
+    <Compile Include="Tests\StrongReaderShould.cs" />
     <Compile Include="Token.cs" />
   </ItemGroup>
   <ItemGroup>
