@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using Markdown.Readers;
-using NUnit.Framework;
 
 namespace Markdown
 {
@@ -53,6 +52,7 @@ namespace Markdown
 	        }
 
 	        tokens.Clear();
+            tagsEnumerator.Dispose();
 
             return newString.ToString();
 	    }

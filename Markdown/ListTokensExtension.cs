@@ -19,19 +19,14 @@ namespace Markdown
                 .OrderBy(tag => tag.Index)
                 .Where((tag) =>
                 {
-                    if (tag.tokenType == TokenType.EmTag)
+                    if (tag.TokenType == TokenType.EmTag)
                     {
-                        wasEmTag = tag.tagType == TagType.Opened;
+                        wasEmTag = tag.TagType == TagType.Opened;
                         return true;
                     }
-                    if (tag.tokenType == TokenType.StrongTag && wasEmTag)
+                    if (tag.TokenType == TokenType.StrongTag && (wasEmTag || wasNestedStrongTag))
                     {
-                        wasNestedStrongTag = tag.tagType == TagType.Opened;
-                        return false;
-                    }
-                    if (tag.tokenType == TokenType.StrongTag && wasNestedStrongTag)
-                    {
-                        wasNestedStrongTag = false;
+                        wasNestedStrongTag = tag.TagType == TagType.Opened;
                         return false;
                     }
                     return true;
