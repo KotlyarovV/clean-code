@@ -39,8 +39,8 @@ namespace Markdown
         public Tag(int index, TokenType tokenType, TagType tagType)
         {
             Index = index;
-            this.TokenType = tokenType;
-            this.TagType = tagType;
+            TokenType = tokenType;
+            TagType = tagType;
         }
 
     }

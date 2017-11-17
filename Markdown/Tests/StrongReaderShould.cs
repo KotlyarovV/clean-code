@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Markdown.Readers;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
+
 
 namespace Markdown.Tests
 {
