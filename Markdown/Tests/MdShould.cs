@@ -50,7 +50,16 @@ namespace Markdown.Tests
         [TestCase("digits_12_3", "digits_12_3", TestName = "underscores_with_digits_not_changed")]
         public void DigitsWithUnderscores_InderscoresIsNotChanged(string expetedStrng, string mdString)
         {
-            Assert.AreEqual(expetedStrng, mdString);
+            Assert.AreEqual(expetedStrng, md.RenderToHtml(mdString));
+        }
+
+        [TestCase("digits <strong>12__3</strong>", "digits __12__3__", TestName = "double_underscores_with_whitespaces_add_tags")]
+        [TestCase("digits <em>12_3</em>", "digits _12_3_", TestName = "underscores_and_whitespaces_with_digits_add_tags")]
+        [TestCase("<strong>12__3</strong> digits", "__12__3__ digits", TestName = "double_underscores_at_begin_with_whitespaces_add_tags")]
+        [TestCase("<em>12_3</em> digits", "_12_3_ digits", TestName = "underscores_and_whitespaces_at_begin_with_digits_add_tags")]
+        public void DigitsWithUnderscoresAndWhitespaces_ShouldBeTrue(string expetedStrng, string mdString)
+        {
+            Assert.AreEqual(expetedStrng, md.RenderToHtml(mdString));
         }
     }
 }

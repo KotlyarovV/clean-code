@@ -18,11 +18,13 @@ namespace Markdown.Readers
 
         protected static bool Screened(int index, string str) => index > 0 && str[index - 1] == '\\';
 
-        protected static bool SymbolAfterIndex(int index, string str, char symbol) => index < str.Length && str[index + 1] == symbol;
+        protected static bool SymbolAfterIndex(int index, string str, char symbol) => index < str.Length - 1 && str[index + 1] == symbol;
 
         protected static bool SymbolBeforeIndex(int index, string str, char symbol) => index > 0 && str[index - 1] == symbol;
 
         protected static bool DigitBeforeSymbol(int index, string str) => index > 0 && char.IsDigit(str[index - 1]);
+
+        protected static bool DigitAfterSymbol(int index, string str) => index < str.Length - 1 && char.IsDigit(str[index + 1]);
 
         protected static bool EndOfString(int index, string str) => index == str.Length - 1;
 

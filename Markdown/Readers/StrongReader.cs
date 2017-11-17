@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Xml;
 
 
 namespace Markdown.Readers
@@ -22,7 +23,7 @@ namespace Markdown.Readers
                 && (!(Screened(index, str) || DigitBeforeSymbol(index, str)) || index == 0) 
                 && (!(SymbolAfterIndex(index + 1, str, ' ') 
                 || SymbolAfterIndex(index + 1, str, '_')
-                || char.IsDigit(str[index + 2])))
+                || DigitAfterSymbol(index + 1, str) && !(SymbolBeforeIndex(index, str, ' ') || index == 0)))
                 && (LeftBoards.Count == 0 || !IsFinalState(index, str));
         }
 
@@ -31,7 +32,9 @@ namespace Markdown.Readers
             return  str[index] == '_' 
                 && index + 1 < str.Length 
                 && SymbolAfterIndex(index, str, '_')
-                && (!SymbolBeforeIndex(index, str, ' '))
+                && !(SymbolBeforeIndex(index, str, ' ') 
+                || DigitBeforeSymbol(index, str) 
+                && !(SymbolAfterIndex(index + 1, str, ' ') || index == str.Length - 2))
                 && LeftBoards.Count != 0;
         }
     }
