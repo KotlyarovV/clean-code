@@ -47,7 +47,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Lexer.cs" />
     <Compile Include="ListTokensExtension.cs" />
     <Compile Include="Md.cs" />
     <Compile Include="Tests\EmReaderShould.cs" />
