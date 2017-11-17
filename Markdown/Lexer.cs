@@ -25,7 +25,7 @@ namespace Markdown
         private bool IsEscapedSymbol(int i, string str) => 
             i < str.Length - 1 && str[i] == '\\' && str[i + 1] == '_';
 
-        public List<Token> FormedTokens()
+        private List<Token> FormedTokens()
         {
             for (var i = 0; i < text.Length; i++)
             {
@@ -34,41 +34,9 @@ namespace Markdown
             return tokens;
         }
 
-        private IEnumerable<Tag> GetTags()
+        public string GetMdString()
         {
-            var openTags = tokens.Select(token => new Tag(token.Start, token.Type, TagType.Opened));
-            var closedTags = tokens.Select(token => new Tag(token.End, token.Type, TagType.Closed));
-
-            var wasEmTag = false;
-            var wasNestedStrongTag = false;
-
-            return openTags
-                .Concat(closedTags)
-                .OrderBy(tag => tag.Index)
-                .Where((tag) =>
-                {
-                    if (tag.tokenType == TokenType.EmTag)
-                    {
-                        wasEmTag = tag.tagType == TagType.Opened;
-                        return true;
-                    }
-                    if (tag.tokenType == TokenType.StrongTag &&  wasEmTag)
-                    {
-                        wasNestedStrongTag = tag.tagType == TagType.Opened;
-                        return false;
-                    }
-                    if (tag.tokenType == TokenType.StrongTag && wasNestedStrongTag)
-                    {
-                        wasNestedStrongTag = false;
-                        return false;
-                    }
-                    return true;
-                });
-        }
-
-        public string GetFinalString()
-        {
-            var tags = GetTags();
+            var tags = FormedTokens().GetTags();
 
             var newString = new StringBuilder();
             var tagsEnumerator =  tags.GetEnumerator();

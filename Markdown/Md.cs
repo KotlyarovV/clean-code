@@ -7,8 +7,7 @@ namespace Markdown
 		public string RenderToHtml(string markdown)
 		{
             var lexer = new Lexer(markdown);
-            lexer.FormedTokens();
-		    return lexer.GetFinalString();
+		    return lexer.GetMdString();
 		}
 	}
 }
