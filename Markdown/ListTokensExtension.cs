@@ -16,21 +16,7 @@ namespace Markdown
 
             return openTags
                 .Concat(closedTags)
-                .OrderBy(tag => tag.Index)
-                .Where((tag) =>
-                {
-                    if (tag.TokenType == TokenType.EmTag)
-                    {
-                        wasEmTag = tag.TagType == TagType.Opened;
-                        return true;
-                    }
-                    if (tag.TokenType == TokenType.StrongTag && (wasEmTag || wasNestedStrongTag))
-                    {
-                        wasNestedStrongTag = tag.TagType == TagType.Opened;
-                        return false;
-                    }
-                    return true;
-                });
+                .OrderBy(tag => tag.Index);
         }
     }
 }

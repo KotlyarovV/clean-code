@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IEnumerableTagsExtension.cs" />
     <Compile Include="ListTokensExtension.cs" />
     <Compile Include="Md.cs" />
     <Compile Include="Tests\EmReaderShould.cs" />

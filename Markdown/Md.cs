@@ -32,7 +32,7 @@ namespace Markdown
 
 	    public string RenderToHtml(string markdown)
 	    {
-	        var tags = FormedTokens(markdown).GetTags();
+	        var tags = FormedTokens(markdown).GetTags().DeleteNested(TokenType.EmTag, TokenType.StrongTag);
 
 	        var newString = new StringBuilder();
 	        var tagsEnumerator = tags.GetEnumerator();
