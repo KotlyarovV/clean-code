@@ -4,7 +4,6 @@ using System.Xml;
 
 namespace Markdown.Readers
 {
-    // тесты
     class StrongReader : Reader
     {
         protected override TokenType TokenType { get; } = TokenType.StrongTag;
@@ -19,6 +18,8 @@ namespace Markdown.Readers
 
         public override bool IsStartState(int index, string str)
         {
+            // 2 - магическая константа
+            // вводит в заблуждение форматирование блока с ||
             return index + 2 < str.Length && str[index] == '_' 
                 && SymbolAfterIndex(index, str, '_') 
                 && (!(Screened(index, str) || DigitBeforeSymbol(index, str)) || index == 0) 
@@ -30,10 +31,12 @@ namespace Markdown.Readers
 
         public override bool IsFinalState(int index, string str)
         {
+            // можно не хардкодить '_'
+            // избавиться от непонятных констант
             return  str[index] == '_' 
                 && index + 1 < str.Length 
                 && SymbolAfterIndex(index, str, '_')
-                && !(SymbolBeforeIndex(index, str, ' ') 
+                && !(SymbolBeforeIndex(index, str, ' ')  // а если не пробел, а таб? 
                 || DigitBeforeSymbol(index, str) 
                 && !(SymbolAfterIndex(index + 1, str, ' ') || index == str.Length - 2))
                 && LeftBoards.Count != 0;

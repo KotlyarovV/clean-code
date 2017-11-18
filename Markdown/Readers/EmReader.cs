@@ -19,6 +19,7 @@ namespace Markdown.Readers
 
         public override bool IsStartState(int index, string str)
         {
+            // замечания как StrongReader.cs
             return (str[index] == '_'
                    && (!Screened(index, str)
                    && (!(SymbolBeforeIndex(index, str, '_') || DigitBeforeSymbol(index, str))) || index == 0))
@@ -30,6 +31,7 @@ namespace Markdown.Readers
 
         public override bool IsFinalState(int index, string str)
         {
+            // замечания как StrongReader.cs
             return (LeftBoards.Count != 0 && str[index] == '_'  
                 && !(SymbolBeforeIndex(index, str, ' ') 
                 || DigitBeforeSymbol(index, str) 

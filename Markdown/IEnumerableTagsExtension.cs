@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Markdown
 {
+    // почему решил сделать методом расширения, а не приватным в классе?
     static class IEnumerableTagsExtension
     {
         public static IEnumerable<Tag> DeleteNested(this IEnumerable<Tag> tags, TokenType externalTag, TokenType nestedTag)

@@ -17,6 +17,7 @@ namespace Markdown.Tests
             strongReader = new StrongReader(tokens);
         }
 
+        // код тестовых методов дублируется, можно объединить в текст-кейсы в наборы
         [TestCase("__a__", 0, TestName = "start_of_string_is_start_of_token")]
         [TestCase("dfd__a__", 3, TestName = "underscore_in_the_middle_of_string")]
         [TestCase("dfd __a__", 4, TestName = "whitrespace_before_underscore")]

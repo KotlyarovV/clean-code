@@ -14,6 +14,7 @@ namespace Markdown.Tests
             md = new Md();
         }
 
+        // Тело у тестовых методов одинаковое, можно объединить тест-кейсы в наборы
         [TestCase("<em>a <em>b</em> b</em>", "_a _b_ b_", TestName = "two_single_underscores_nested")]
         [TestCase("<em>aaaa</em>b<em>bbb</em>", "_aaaa_b_bbb_", TestName = "two_single_underscores_not_nested_")]
         [TestCase("<em>aaaa</em>", "_aaaa_", TestName = "one_single_underscore_many_letters")]
@@ -53,6 +54,7 @@ namespace Markdown.Tests
             Assert.AreEqual(expetedStrng, md.RenderToHtml(mdString));
         }
 
+        // не увидел теста, когда пробельным символом является \t
         [TestCase("digits <strong>12__3</strong>", "digits __12__3__", TestName = "double_underscores_with_whitespaces_add_tags")]
         [TestCase("digits <em>12_3</em>", "digits _12_3_", TestName = "underscores_and_whitespaces_with_digits_add_tags")]
         [TestCase("<strong>12__3</strong> digits", "__12__3__ digits", TestName = "double_underscores_at_begin_with_whitespaces_add_tags")]

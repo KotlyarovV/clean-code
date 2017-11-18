@@ -5,6 +5,8 @@ using System.Linq;
 
 namespace Markdown
 {
+	// Будет лучше воспользоваться парсером коммандной строки
+	// FluentCommandLineParser, CommandLine, и т.д.
 	class Program
 	{
 	    private static readonly string[] launchProperties = { "--in", "--out" };
@@ -38,6 +40,7 @@ namespace Markdown
 		    }
 		    catch
 		    {
+			    // было бы круто объяснить пользователю, в каком именно месте ошибка
 		        Console.WriteLine("There was an error in parsing.");
                 return;
 		    }

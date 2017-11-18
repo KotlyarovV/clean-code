@@ -21,6 +21,7 @@ namespace Markdown
 	    private bool IsEscapedSymbol(int i, string str) =>
 	        i < str.Length - 1 && str[i] == '\\' && str[i + 1] == '_';
 
+		// непонятное название
 	    private List<Token> FormedTokens(string text)
 	    {
 	        for (var i = 0; i < text.Length; i++)
@@ -32,6 +33,7 @@ namespace Markdown
 
 	    public string RenderToHtml(string markdown)
 	    {
+		    // насколько хорошо это будет расширяться при добавлении нового синтаксиса в маркдаун?
 	        var tags = FormedTokens(markdown).GetTags().DeleteNested(TokenType.EmTag, TokenType.StrongTag);
 
 	        var newString = new StringBuilder();
@@ -42,6 +44,7 @@ namespace Markdown
 	        {
 	            if (IsEscapedSymbol(i, markdown)) continue;
 
+		        // possible null reference exception
 	            if (hasNext && i == tagsEnumerator.Current.Index)
 	            {
 	                newString.Append(tagsEnumerator.Current.TextRepresentation);
@@ -51,7 +54,7 @@ namespace Markdown
 	            else newString.Append(markdown[i]);
 	        }
 
-	        tokens.Clear();
+	        tokens.Clear(); // зачем?
             tagsEnumerator.Dispose();
 
             return newString.ToString();

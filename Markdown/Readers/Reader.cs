@@ -16,6 +16,7 @@ namespace Markdown.Readers
 
         protected abstract List<Token> Tokens { get; set; }
 
+        // логика проверки экранированных символов дублируется здесь и в Md
         protected static bool Screened(int index, string str) => index > 0 && str[index - 1] == '\\';
 
         protected static bool SymbolAfterIndex(int index, string str, char symbol) => index < str.Length - 1 && str[index + 1] == symbol;
@@ -28,6 +29,7 @@ namespace Markdown.Readers
 
         protected static bool EndOfString(int index, string str) => index == str.Length - 1;
 
+        // virtual method is never overriden
         public virtual void ReadChar(int index, string str)
         {
             if (IsStartState(index, str))
