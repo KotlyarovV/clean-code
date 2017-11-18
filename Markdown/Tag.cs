@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿﻿using System.Collections.Generic;
 
 
 namespace Markdown
@@ -11,9 +11,9 @@ namespace Markdown
 
     class Tag
     {
-        private readonly TokenType tokenType;
+        public readonly TokenType TokenType;
         public readonly int Index;
-        private readonly TagType tagType;
+        public readonly TagType TagType;
 
         private static readonly Dictionary<TokenType, string> stringRepresentation = 
             new Dictionary<TokenType, string>
@@ -21,26 +21,26 @@ namespace Markdown
             { TokenType.EmTag, "<em>"},
             { TokenType.StrongTag, "<strong>"}
         };
- 
-        private static readonly Dictionary<TokenType, int> lengthOfMardownRepresentation = 
-            new Dictionary<TokenType, int>()
-        {
-            { TokenType.EmTag, 1}, // можно не хардкодить значения, а вычислять
-            { TokenType.StrongTag, 2}
-        };
 
-        public int LengthOfMardownRepresentation => lengthOfMardownRepresentation[tokenType];
+        private static readonly Dictionary<TokenType, string> mardownRepresentation = 
+            new Dictionary<TokenType, string>()
+        {
+            { TokenType.EmTag, "_"},
+            { TokenType.StrongTag, "__"}
+        };
+        
+        public int LengthOfMardownRepresentation => mardownRepresentation[TokenType].Length;
 
         public string TextRepresentation =>
-            (tagType == TagType.Opened)
-                ? stringRepresentation[tokenType]
-                : stringRepresentation[tokenType][0] + "/" + stringRepresentation[tokenType].Substring(1);
+            (TagType == TagType.Opened)
+                ? stringRepresentation[TokenType]
+                : stringRepresentation[TokenType][0] + "/" + stringRepresentation[TokenType].Substring(1);
 
         public Tag(int index, TokenType tokenType, TagType tagType)
         {
             Index = index;
-            this.tokenType = tokenType;
-            this.tagType = tagType;
+            TokenType = tokenType;
+            TagType = tagType;
         }
 
     }

@@ -1,95 +1,60 @@
-﻿using NUnit.Framework;
+﻿﻿using System.Collections.Generic;
+using System.Text;
+using Markdown.Readers;
 
 namespace Markdown
 {
 	public class Md
 	{
-		public string RenderToHtml(string markdown)
-		{
-            var lexer = new Lexer(markdown);
-            lexer.GetTokens();
-		    return lexer.GetFinalString();
-		}
+	    private readonly List<Reader> readers = new List<Reader>();
+	    private readonly List<Token> tokens = new List<Token>();
+
+	    public Md()
+	    {
+	        var strongReader = new StrongReader(tokens);
+	        var emReader = new EmReader(tokens, strongReader);
+
+	        readers.Add(emReader);
+	        readers.Add(strongReader);
+	    }
+
+	    private bool IsEscapedSymbol(int i, string str) =>
+	        i < str.Length - 1 && str[i] == '\\' && str[i + 1] == '_';
+
+	    private List<Token> FormedTokens(string text)
+	    {
+	        for (var i = 0; i < text.Length; i++)
+	        {
+	            readers.ForEach(reader => reader.ReadChar(i, text));
+	        }
+	        return tokens;
+	    }
+
+	    public string RenderToHtml(string markdown)
+	    {
+	        var tags = FormedTokens(markdown).GetTags().DeleteNested(TokenType.EmTag, TokenType.StrongTag);
+
+	        var newString = new StringBuilder();
+	        var tagsEnumerator = tags.GetEnumerator();
+	        var hasNext = tagsEnumerator.MoveNext();
+
+	        for (var i = 0; i < markdown.Length; i++)
+	        {
+	            if (IsEscapedSymbol(i, markdown)) continue;
+
+	            if (hasNext && i == tagsEnumerator.Current.Index)
+	            {
+	                newString.Append(tagsEnumerator.Current.TextRepresentation);
+	                i = i - 1 + tagsEnumerator.Current.LengthOfMardownRepresentation;
+	                hasNext = tagsEnumerator.MoveNext();
+	            }
+	            else newString.Append(markdown[i]);
+	        }
+
+	        tokens.Clear();
+            tagsEnumerator.Dispose();
+
+            return newString.ToString();
+	    }
 	}
-
-    // Вынести в отдельную папку с тестами
-	[TestFixture]
-	public class Md_ShouldRender
-	{
-	    private Md md;
-
-	    [SetUp]
-	    public void SetUp()
-	    {
-	        md = new Md();
-	    }
-
-	    
-	    // зачем столько тестовых методов, если тело у них идентичное?
-	    [Test]
-	    public void OneUnderscore_TagEmAdded()
-	    {
-	        Assert.AreEqual("<em>a</em>", md.RenderToHtml("_a_"));
-	    }
-
-	    [Test]
-	    public void OneUnderscoreManyLetters_TagEmAdded()
-	    {
-	        Assert.AreEqual("<em>aaaa</em>", md.RenderToHtml("_aaaa_"));
-	    }
-
-	    [Test]
-	    public void TwoUnderscoreManyLetters_TwoTagsEmAdded()
-	    {
-	        Assert.AreEqual("<em>aaaa</em>b<em>bbb</em>", md.RenderToHtml("_aaaa_b_bbb_"));
-	    }
-
-	    [Test]
-	    public void NestedUnderscore_NestedTagEmAdded()
-	    {
-	        Assert.AreEqual("<em>a <em>b</em> b</em>", md.RenderToHtml("_a _b_ b_"));
-	    }
-
-	    [Test]
-	    public void DoubleUnderscore_TagStrongAdded()
-	    {
-	        Assert.AreEqual("<strong>a</strong>", md.RenderToHtml("__a__"));
-	    }
-
-	    [Test]
-	    public void DoubleUnderscore_ManyLetters_TagStrongAdded()
-	    {
-	        Assert.AreEqual("<strong>aaaa</strong>", md.RenderToHtml("__aaaa__"));
-	    }
-
-	    [Test]
-	    public void DoubleUnderscoreManyLettersTwoSection_TwoTagsStrongAdded()
-	    {
-	        Assert.AreEqual("<strong>aaaa</strong>b<strong>bbb</strong>", md.RenderToHtml("__aaaa__b__bbb__"));
-	    }
-
-	    [Test]
-	    public void NestedDoubleUnderscores_NestedTagsStrongsAdded()
-	    {
-	        Assert.AreEqual("<strong>a <strong>b</strong> b</strong>", md.RenderToHtml("__a __b__ b__"));
-	    }
-
-	    [Test]
-	    public void NestedDoubleAndOneUnderscores_NestedTagsStrongsAndEmAdded()
-	    {
-	        Assert.AreEqual("<strong>a <em>b</em> b</strong>", md.RenderToHtml("__a _b_ b__"));
-	    }
-
-	    [Test]
-	    public void NestedOneAndDoubleUnderscores_NestedStrongsTagsNotAdded()
-	    {
-	        Assert.AreEqual("<em>a __b__ b</em>", md.RenderToHtml("_a __b__ b_"));
-	    }
-
-	    [Test] // кейс на экранирование __ не работает
-	    public void ScreenedUnderscores_UnderscoresIsScreened()
-	    {
-	        Assert.AreEqual("__a__", md.RenderToHtml(@"\__a\__"));
-	    }
-    }
 }
