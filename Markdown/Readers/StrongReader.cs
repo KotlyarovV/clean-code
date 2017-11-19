@@ -24,9 +24,9 @@ namespace Markdown.Readers
         {
             var nextIndex = index + 1;
 
-            return str[index] == Underscore && HasSymbolAfterElement(index, str) 
-                && SymbolAfterIndex(index, str, Underscore) 
-                && (!(IsEscapedSymbol(index, str) || DigitBeforeSymbol(index, str)) || index == 0) 
+            return str[index] == Underscore && HasSymbolAfterElement(index, str)
+                && SymbolAfterIndex(index, str, Underscore)
+                && (!(IsEscapedSymbol(index, str) || DigitBeforeSymbol(index, str)) || index == 0)
                 && (!(WhiteSpaceAfterIndex(nextIndex, str)
                     || SymbolAfterIndex(nextIndex, str, Underscore)
                     || DigitAfterSymbol(nextIndex, str) && !(WhiteSpaceBeforeIndex(index, str) || index == 0)))
@@ -37,11 +37,11 @@ namespace Markdown.Readers
         {
             var nextIndex = index + 1;
 
-            return  str[index] == Underscore
-                && !IsInEndOfString(index, str) 
+            return str[index] == Underscore
+                && !IsInEndOfString(index, str)
                 && SymbolAfterIndex(index, str, Underscore)
-                && !(WhiteSpaceBeforeIndex(index, str) 
-                    || DigitBeforeSymbol(index, str) 
+                && !(WhiteSpaceBeforeIndex(index, str)
+                    || DigitBeforeSymbol(index, str)
                     && !(WhiteSpaceAfterIndex(nextIndex, str) || index == str.Length - lengthOfElement))
                 && LeftBoards.Count != 0;
         }

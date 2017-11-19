@@ -4,37 +4,49 @@ using Fclp;
 
 namespace Markdown
 {
-	class Program
-	{
-		static void Main(string[] args)
-		{
-		    var parser = new FluentCommandLineParser();
+    class Program
+    {
 
-		    var fileOutName = string.Empty;
-		    var fileInName = string.Empty;
+        static Tuple<string, string, ICommandLineParserResult> ParseArgs(string[] args)
+        {
+            var parser = new FluentCommandLineParser();
 
-		    parser.Setup<string>("out")
-		        .Callback(str => fileOutName = str)
+            var fileOutName = string.Empty;
+            var fileInName = string.Empty;
+
+            parser.Setup<string>("out")
+                .Callback(str => fileOutName = str)
                 .Required();
 
-		    parser.Setup<string>("in")
-		        .Callback(str => fileInName = str)
+            parser.Setup<string>("in")
+                .Callback(str => fileInName = str)
                 .Required();
 
-		    var result = parser.Parse(args);
+            var result = parser.Parse(args);
+            return Tuple.Create(fileInName, fileOutName, result);
+        }
 
-		    if (result.HasErrors)
-		    {
-		        Console.WriteLine("One of the parameters was missed!");
-		    }
+        static void Main(string[] args)
+        {
+            var parsingResult = ParseArgs(args);
 
-		    string fileIn;
+            var result = parsingResult.Item3;
+            if (result.HasErrors)
+            {
+                Console.WriteLine("One of the parameters was missed!");
+                return; ;
+            }
+
+            var fileOutName = parsingResult.Item2;
+            var fileInName = parsingResult.Item1;
+
+            string fileIn;
 
             try
             {
                 fileIn = File.ReadAllText(fileInName);
             }
-            catch 
+            catch
             {
                 Console.WriteLine("No in file");
                 return;
@@ -52,8 +64,8 @@ namespace Markdown
                 Console.WriteLine(e.Message);
                 return;
             }
-            
-            File.WriteAllText(fileOutName , mdLine);
-		}
-	}
+
+            File.WriteAllText(fileOutName, mdLine);
+        }
+    }
 }

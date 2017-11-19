@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace Markdown.Tests
 {
-    
+
     [TestFixture]
     public class Md_ShouldRender
     {
@@ -31,7 +31,7 @@ namespace Markdown.Tests
     }
 
     public class DataClass
-    {    
+    {
         public static IEnumerable SingleUnderscore()
         {
             yield return new TestCaseData("_a _b_ b_")
@@ -140,5 +140,5 @@ namespace Markdown.Tests
                 .Returns("<em>12_3</em>\tdigits")
                 .SetName("underscores_and_tab_at_begin_with_digits_add_tags");
         }
-    }    
+    }
 }
