@@ -9,6 +9,8 @@ namespace Markdown.Readers
 
         protected sealed override List<Token> Tokens { get; set; }
 
+        private static int lengthOfElement = 1;
+
         private readonly StrongReader strongReader;
 
         public EmReader(List<Token> tokens, StrongReader strongReader)
@@ -19,24 +21,23 @@ namespace Markdown.Readers
 
         public override bool IsStartState(int index, string str)
         {
-            return (str[index] == '_'
-                   && (!Screened(index, str)
-                   && (!(SymbolBeforeIndex(index, str, '_') || DigitBeforeSymbol(index, str))) || index == 0))
+            return (str[index] == Underscore
+                   && (!IsEscapedSymbol(index, str)
+                   && (!(SymbolBeforeIndex(index, str, Underscore) || DigitBeforeSymbol(index, str))) || index == 0))
                    && !EndOfString(index, str)
-                   && (!(SymbolAfterIndex(index, str, ' ') || SymbolAfterIndex(index, str, '_') 
-                   || DigitAfterSymbol(index, str) && !(SymbolBeforeIndex(index, str, ' ') || index == 0)))
+                   && (!(WhiteSpaceAfterIndex(index, str) 
+                        || SymbolAfterIndex(index, str, Underscore) 
+                        || DigitAfterSymbol(index, str) && !(WhiteSpaceBeforeIndex(index, str) || index == 0)))
                    && (LeftBoards.Count == 0 || !IsFinalState(index, str));
         }
 
         public override bool IsFinalState(int index, string str)
         {
-            return (LeftBoards.Count != 0 && str[index] == '_'  
-                && !(SymbolBeforeIndex(index, str, ' ') 
-                || DigitBeforeSymbol(index, str) 
-                && !(SymbolAfterIndex(index, str, ' ') 
-                || index == str.Length - 1)) 
-                && !SymbolBeforeIndex(index, str, '_') 
-                && (index == str.Length - 1 || (!(SymbolAfterIndex(index, str, '_') && strongReader.IsActive))));                
+            return (LeftBoards.Count != 0 && str[index] == Underscore
+                && !(WhiteSpaceBeforeIndex(index, str) || DigitBeforeSymbol(index, str) 
+                    && !(WhiteSpaceAfterIndex(index, str) || EndOfString(index, str))) 
+                && !SymbolBeforeIndex(index, str, Underscore) 
+                && (index == str.Length - lengthOfElement || (!(SymbolAfterIndex(index, str, Underscore) && strongReader.IsActive))));                
         }
     }
 }

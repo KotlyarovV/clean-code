@@ -1,54 +1,59 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using Fclp;
 
 namespace Markdown
 {
 	class Program
 	{
-	    private static readonly string[] launchProperties = { "--in", "--out" };
-
 		static void Main(string[] args)
 		{
-            var launchPropertiesValues = new Dictionary<string, string>();
-		    string fileInn;
-            
-            for (var i = 0; i < args.Length; i++)
+		    var parser = new FluentCommandLineParser();
+
+		    var fileOutName = string.Empty;
+		    var fileInName = string.Empty;
+
+		    parser.Setup<string>("out")
+		        .Callback(str => fileOutName = str)
+                .Required();
+
+		    parser.Setup<string>("in")
+		        .Callback(str => fileInName = str)
+                .Required();
+
+		    var result = parser.Parse(args);
+
+		    if (result.HasErrors)
+		    {
+		        Console.WriteLine("One of the parameters was missed!");
+		    }
+
+		    string fileIn;
+
+            try
             {
-                if (launchProperties.Contains(args[i]))
-                    launchPropertiesValues[args[i]] = args[i + 1];
+                fileIn = File.ReadAllText(fileInName);
+            }
+            catch 
+            {
+                Console.WriteLine("No in file");
+                return;
             }
 
-		    try
-		    {
-                fileInn = File.ReadAllText(launchPropertiesValues["--in"]);
-		    }
-		    catch 
-		    {
-		        Console.WriteLine("No in file");
-                return;
-		    }
-
-		    string mdLine;
-		    try
-		    {
+            string mdLine;
+            try
+            {
                 var md = new Md();
-		        mdLine = md.RenderToHtml(fileInn);
-		    }
-		    catch
-		    {
-		        Console.WriteLine("There was an error in parsing.");
+                mdLine = md.RenderToHtml(fileIn);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("There was an error in parsing.");
+                Console.WriteLine(e.Message);
                 return;
-		    }
-
-		    if (!launchPropertiesValues.ContainsKey("--out"))
-		    {
-		        Console.WriteLine("Out file was not specified!");
-                return;
-		    }
+            }
             
-		    File.WriteAllText(launchPropertiesValues["--out"], mdLine);
-        }
+            File.WriteAllText(fileOutName , mdLine);
+		}
 	}
 }

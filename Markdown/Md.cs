@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Markdown.Readers;
 
@@ -17,32 +18,62 @@ namespace Markdown
 	        readers.Add(emReader);
 	        readers.Add(strongReader);
 	    }
+    
 
-	    private bool IsEscapedSymbol(int i, string str) =>
-	        i < str.Length - 1 && str[i] == '\\' && str[i + 1] == '_';
-
-	    private List<Token> FormedTokens(string text)
+	    private void MakeTokens(string text)
 	    {
 	        for (var i = 0; i < text.Length; i++)
 	        {
 	            readers.ForEach(reader => reader.ReadChar(i, text));
 	        }
-	        return tokens;
 	    }
 
-	    public string RenderToHtml(string markdown)
+	    private static IEnumerable<Tag> GetTags(List<Token> tokens)
 	    {
-	        var tags = FormedTokens(markdown).GetTags().DeleteNested(TokenType.EmTag, TokenType.StrongTag);
+	        var openTags = tokens.Select(token => new Tag(token.Start, token.Type, TagType.Opened));
+	        var closedTags = tokens.Select(token => new Tag(token.End, token.Type, TagType.Closed));
 
-	        var newString = new StringBuilder();
-	        var tagsEnumerator = tags.GetEnumerator();
+	        return openTags
+	            .Concat(closedTags)
+	            .OrderBy(tag => tag.Index);
+	    }
+
+	    private static IEnumerable<Tag> DeleteNested(IEnumerable<Tag> tags, TokenType externalTag, TokenType nestedTag)
+	    {
+	        var wasExternalTag = false;
+	        var wasNestedTag = false;
+
+	        return tags.Where((tag) =>
+	        {
+	            if (tag.TokenType == externalTag)
+	            {
+	                wasExternalTag = tag.TagType == TagType.Opened;
+	                return true;
+	            }
+	            if (tag.TokenType == nestedTag && (wasExternalTag || wasNestedTag))
+	            {
+	                wasNestedTag = tag.TagType == TagType.Opened;
+	                return false;
+	            }
+	            return true;
+	        });
+	    }
+
+        public string RenderToHtml(string markdown)
+        {
+            MakeTokens(markdown);
+	        var tags = GetTags(tokens);
+            var tagsWithoutNested = DeleteNested(tags, TokenType.EmTag, TokenType.StrongTag);
+
+            var newString = new StringBuilder();
+	        var tagsEnumerator = tagsWithoutNested.GetEnumerator();
 	        var hasNext = tagsEnumerator.MoveNext();
 
 	        for (var i = 0; i < markdown.Length; i++)
 	        {
-	            if (IsEscapedSymbol(i, markdown)) continue;
+	            if (i < markdown.Length - 1 && Reader.IsEscapedSymbol(i + 1, markdown)) continue;
 
-	            if (hasNext && i == tagsEnumerator.Current.Index)
+	            if (hasNext && tagsEnumerator.Current != null && i == tagsEnumerator.Current.Index)
 	            {
 	                newString.Append(tagsEnumerator.Current.TextRepresentation);
 	                i = i - 1 + tagsEnumerator.Current.LengthOfMardownRepresentation;
