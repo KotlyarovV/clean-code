@@ -1,5 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Linq;
+using System.Text;
+using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Reports;
+using BenchmarkDotNet.Running;
+using Fclp.Internals.Extensions;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 
 
 namespace Markdown.Tests
@@ -9,7 +17,7 @@ namespace Markdown.Tests
     public class Md_ShouldRender
     {
         private Md md;
-
+        
         [SetUp]
         public void SetUp()
         {
@@ -27,6 +35,62 @@ namespace Markdown.Tests
         public string MdStringData_ShouldConvertToHtml(string expetedString)
         {
             return md.RenderToHtml(expetedString);
+        }
+
+        [Test]
+        public void TestMethod()
+        {
+            BenchmarkRunner.Run<MarkDownBenchmark>();
+            /*var result = BenchmarkRunner.Run<MarkDownBenchmark>();
+            var a = result.Reports[0].ResultStatistics.Median;
+            var b = result.Reports[1].ResultStatistics.Median;
+            Assert.AreEqual(a, b);
+            */
+        }
+    }
+
+
+    public class MarkDownBenchmark
+    {
+        public static string GetGreatString(string str, int i)
+        {
+            var stringBuilder = new StringBuilder(str);
+            Enumerable.Range(0, i).ForEach((a) => stringBuilder.Append(str));
+            return stringBuilder.ToString();
+        }
+
+        private string markDownString;
+        private string markDownString1000;
+        private string markDownString2000;
+        private string markDownString5000;
+        private Md Md;
+
+        [GlobalSetup]
+        public void GlobalSetUp()
+        {
+            markDownString = "_a _b_ b_ digits_aa_a __aaaa__b__bbb__ _a __b__ b_";
+            markDownString1000 = GetGreatString(markDownString, 1000);
+            markDownString2000 = GetGreatString(markDownString, 2000);
+            markDownString5000 = GetGreatString(markDownString, 5000);
+            Md = new Md();
+        }
+        
+        [Benchmark(Description = "TestMarkDownString1000")]
+        public string TestMarkDownString1000()
+        {
+            return Md.RenderToHtml(markDownString1000);
+        }
+        
+        [Benchmark(Description = "TestMarkDownString2000")]
+        public string TestMarkDownString2000()
+        {
+            return Md.RenderToHtml(markDownString2000);
+        }
+
+        [Benchmark(Description = "TestMarkDownString5000")]
+        public string TestMarkDownString5000()
+        {
+            return Md.RenderToHtml(markDownString5000);
         }
     }
 
@@ -141,4 +205,6 @@ namespace Markdown.Tests
                 .SetName("underscores_and_tab_at_begin_with_digits_add_tags");
         }
     }
+
+
 }
