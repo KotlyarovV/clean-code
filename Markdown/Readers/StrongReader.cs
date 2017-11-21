@@ -1,4 +1,4 @@
-﻿﻿using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 
 namespace Markdown.Readers
@@ -9,6 +9,7 @@ namespace Markdown.Readers
 
         protected sealed override List<Token> Tokens { get; set; }
 
+        // AtEndOfString
         private static bool IsInEndOfString(int index, string str) => index + 1 >= str.Length;
 
         private static int lengthOfElement = 2;

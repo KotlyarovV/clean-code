@@ -11,17 +11,21 @@ namespace Markdown
         {
             var parser = new FluentCommandLineParser();
 
+            // можно выделить параметры в отдельный класс
+            // new FluentCommandLineParser<ApplicationArguments>();
             var fileOutName = string.Empty;
-            var fileInName = string.Empty;
+            var fileInName = string.Empty; 
 
+            // каждый раз при вызове парсинга аргументов будет занаво настраиваться парсер
             parser.Setup<string>("out")
                 .Callback(str => fileOutName = str)
-                .Required();
+                .Required();    
 
             parser.Setup<string>("in")
                 .Callback(str => fileInName = str)
                 .Required();
-
+            // прелесть этой библиотеки в том, что она позволяет находу генерировать help, а ты этим не пользуешься :(
+           
             var result = parser.Parse(args);
             return Tuple.Create(fileInName, fileOutName, result);
         }
@@ -30,6 +34,7 @@ namespace Markdown
         {
             var parsingResult = ParseArgs(args);
 
+            // parsingResult, result. давай clean-code!
             var result = parsingResult.Item3;
             if (result.HasErrors)
             {
@@ -48,11 +53,11 @@ namespace Markdown
             }
             catch
             {
-                Console.WriteLine("No in file");
+                Console.WriteLine("No in file"); // не экономь на спичках
                 return;
             }
 
-            string mdLine;
+            string mdLine; // разве мы mdLine получаем вызвал метод RenderToHtml?
             try
             {
                 var md = new Md();

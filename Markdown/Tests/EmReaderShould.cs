@@ -17,6 +17,8 @@ namespace Markdown.Tests
             emReader = new EmReader(tokens, strongReader);
         }
 
+        // EmReaderShould SymbolInIndexIsStartSymbol_ShouldBeTrue
+        // если уж в стиле Should именуешь, надо и методы соответственно называть 
         [TestCase("_a_", 0, TestName = "start_of_string_is_start_of_token")]
         [TestCase("dfd_a_", 3, TestName = "underscore_in_the_middle_of_string")]
         [TestCase("dfd _a_", 4, TestName = "whitrespace_before_underscore")]

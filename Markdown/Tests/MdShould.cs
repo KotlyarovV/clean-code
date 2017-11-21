@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections;
 using System.Linq;
 using System.Text;
@@ -27,7 +27,6 @@ namespace Markdown.Tests
         [TestCaseSource(typeof(DataClass), nameof(DataClass.SingleUnderscore))]
         [TestCaseSource(typeof(DataClass), nameof(DataClass.DoubleUnderscore))]
         [TestCaseSource(typeof(DataClass), nameof(DataClass.ScreenedUnderscores))]
-
         [TestCaseSource(typeof(DataClass), nameof(DataClass.NestedDoubleAndSingleUnderscores))]
         [TestCaseSource(typeof(DataClass), nameof(DataClass.DigitsWithUnderscores))]
         [TestCaseSource(typeof(DataClass), nameof(DataClass.DigitsWithUnderscoresAndWhitespaces))]
@@ -37,7 +36,8 @@ namespace Markdown.Tests
             return md.RenderToHtml(expetedString);
         }
 
-        [Test]
+        // нагрузочный тест не должен запускаться вместе с остальными юнит-тестами, навешай атрибут
+        [Test] 
         public void TestMethod()
         {
             var result = BenchmarkRunner.Run<MarkDownBenchmark>();
@@ -50,6 +50,7 @@ namespace Markdown.Tests
 
     public class MarkDownBenchmark
     {
+        // чистый код же, ну. i = count, Great ...
         private static string GetGreatString(string str, int i)
         {
             var stringBuilder = new StringBuilder(str);
@@ -59,8 +60,9 @@ namespace Markdown.Tests
 
         private string markDownString;
         private string markDownStringBig;
-        private string markDownStringBigger;
+        private string markDownStringBigger; // тоже очень понятное имя
 
+        // const же есть
         private int repetitionsNumber = 100;
         public static readonly int MagnificationFactor = 2;
         private Md md;

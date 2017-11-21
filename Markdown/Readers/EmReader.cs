@@ -1,4 +1,4 @@
-﻿﻿using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 
 namespace Markdown.Readers
@@ -9,7 +9,7 @@ namespace Markdown.Readers
 
         protected sealed override List<Token> Tokens { get; set; }
 
-        private static int lengthOfElement = 1;
+        private static int lengthOfElement = 1; // Tag.LengthOfMarkdownRepresentation[TagType.Em].Length
 
         private readonly StrongReader strongReader;
 
