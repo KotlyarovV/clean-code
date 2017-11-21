@@ -159,6 +159,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Benchmark\BenchmarkTest.cs" />
+    <Compile Include="Benchmark\MarkDownBenchmark.cs" />
     <Compile Include="Md.cs" />
     <Compile Include="Tests\EmReaderShould.cs" />
     <Compile Include="Tests\MdShould.cs" />

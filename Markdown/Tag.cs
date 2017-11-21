@@ -22,14 +22,14 @@ namespace Markdown
             { TokenType.StrongTag, "<strong>"}
         };
 
-        private static readonly Dictionary<TokenType, string> mardownRepresentation =
+        public static readonly Dictionary<TokenType, string> MardownRepresentation =
             new Dictionary<TokenType, string>()
         {
             { TokenType.EmTag, "_"},
             { TokenType.StrongTag, "__"}
         };
 
-        public int LengthOfMardownRepresentation => mardownRepresentation[TokenType].Length;
+        public int LengthOfMardownRepresentation => MardownRepresentation[TokenType].Length;
 
         public string TextRepresentation =>
             (TagType == TagType.Opened)

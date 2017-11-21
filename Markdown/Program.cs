@@ -4,59 +4,57 @@ using Fclp;
 
 namespace Markdown
 {
+    public class ApplicationArguments
+    {
+        public string FileOutName { get; set; }
+        public string FileInName { get; set; }
+    }
+
     class Program
     {
+        static Md md = new Md();
 
-        static Tuple<string, string, ICommandLineParserResult> ParseArgs(string[] args)
+        static void PrepareParser(FluentCommandLineParser<ApplicationArguments> parser)
         {
-            var parser = new FluentCommandLineParser();
-
-            var fileOutName = string.Empty;
-            var fileInName = string.Empty;
-
-            parser.Setup<string>("out")
-                .Callback(str => fileOutName = str)
+            parser.Setup(arg => arg.FileInName)
+                .As("in")
                 .Required();
 
-            parser.Setup<string>("in")
-                .Callback(str => fileInName = str)
+            parser.Setup(arg => arg.FileOutName)
+                .As("out")
                 .Required();
-
-            var result = parser.Parse(args);
-            return Tuple.Create(fileInName, fileOutName, result);
         }
 
         static void Main(string[] args)
         {
-            var parsingResult = ParseArgs(args);
+            var parser = new FluentCommandLineParser<ApplicationArguments>();
+            PrepareParser(parser);
+            var result = parser.Parse(args);
 
-            var result = parsingResult.Item3;
             if (result.HasErrors)
             {
                 Console.WriteLine("One of the parameters was missed!");
                 return; ;
             }
 
-            var fileOutName = parsingResult.Item2;
-            var fileInName = parsingResult.Item1;
+            var arguments = parser.Object;
 
             string fileIn;
 
             try
             {
-                fileIn = File.ReadAllText(fileInName);
+                fileIn = File.ReadAllText(arguments.FileInName);
             }
             catch
             {
-                Console.WriteLine("No in file");
+                Console.WriteLine("No input file");
                 return;
             }
 
-            string mdLine;
+            string htmlLine;
             try
             {
-                var md = new Md();
-                mdLine = md.RenderToHtml(fileIn);
+                htmlLine = md.RenderToHtml(fileIn);
             }
             catch (Exception e)
             {
@@ -65,7 +63,7 @@ namespace Markdown
                 return;
             }
 
-            File.WriteAllText(fileOutName, mdLine);
+            File.WriteAllText(arguments.FileOutName, htmlLine);
         }
     }
 }

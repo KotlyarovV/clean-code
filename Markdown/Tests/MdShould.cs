@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
-using System.Text;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Reports;
-using BenchmarkDotNet.Running;
-using Fclp.Internals.Extensions;
+﻿using System.Collections;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 
 namespace Markdown.Tests
@@ -36,56 +28,8 @@ namespace Markdown.Tests
         {
             return md.RenderToHtml(expetedString);
         }
-
-        [Test]
-        public void TestMethod()
-        {
-            var result = BenchmarkRunner.Run<MarkDownBenchmark>();
-            var time1 = result.Reports[0].ResultStatistics.Median;
-            var time2 = result.Reports[1].ResultStatistics.Median;
-            Assert.True(time1 * Math.Pow(MarkDownBenchmark.MagnificationFactor, 2) > time2);
-        }
     }
 
-
-    public class MarkDownBenchmark
-    {
-        private static string GetGreatString(string str, int i)
-        {
-            var stringBuilder = new StringBuilder(str);
-            Enumerable.Range(0, i).ForEach((a) => stringBuilder.Append(str));
-            return stringBuilder.ToString();
-        }
-
-        private string markDownString;
-        private string markDownStringBig;
-        private string markDownStringBigger;
-
-        private int repetitionsNumber = 100;
-        public static readonly int MagnificationFactor = 2;
-        private Md md;
-
-        [GlobalSetup]
-        public void GlobalSetUp()
-        {
-            markDownString = "_a _b_ b_ digits_aa_a __aaaa__b__bbb__ _a __b__ b_";
-            markDownStringBig = GetGreatString(markDownString, repetitionsNumber);
-            markDownStringBigger = GetGreatString(markDownString, repetitionsNumber * MagnificationFactor);
-            md = new Md();
-        }
-        
-        [Benchmark(Description = "TestMarkDownStringBig")]
-        public string TestMarkDownStringBig()
-        {
-            return md.RenderToHtml(markDownStringBig);
-        }
-        
-        [Benchmark(Description = "TestMarkDownStringBigger")]
-        public string TestMarkDownStringBigger()
-        {
-            return md.RenderToHtml(markDownStringBigger);
-        }
-    }
 
     public class DataClass
     {

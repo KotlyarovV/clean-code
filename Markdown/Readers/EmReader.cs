@@ -9,7 +9,7 @@ namespace Markdown.Readers
 
         protected sealed override List<Token> Tokens { get; set; }
 
-        private static int lengthOfElement = 1;
+        private static readonly int lengthOfElement = Tag.MardownRepresentation[TokenType.EmTag].Length;
 
         private readonly StrongReader strongReader;
 

@@ -9,9 +9,9 @@ namespace Markdown.Readers
 
         protected sealed override List<Token> Tokens { get; set; }
 
-        private static bool IsInEndOfString(int index, string str) => index + 1 >= str.Length;
+        private static bool AtInEndOfString(int index, string str) => index + 1 >= str.Length;
 
-        private static int lengthOfElement = 2;
+        private static readonly int lengthOfElement = Tag.MardownRepresentation[TokenType.StrongTag].Length;
 
         private static bool HasSymbolAfterElement(int index, string str) => index + lengthOfElement < str.Length;
 
@@ -38,7 +38,7 @@ namespace Markdown.Readers
             var nextIndex = index + 1;
 
             return str[index] == Underscore
-                && !IsInEndOfString(index, str)
+                && !AtInEndOfString(index, str)
                 && SymbolAfterIndex(index, str, Underscore)
                 && !(WhiteSpaceBeforeIndex(index, str)
                     || DigitBeforeSymbol(index, str)

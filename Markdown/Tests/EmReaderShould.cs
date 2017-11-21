@@ -54,7 +54,7 @@ namespace Markdown.Tests
         {
             for (var i = 0; i < index; i++)
                 emReader.ReadChar(i, str);
-            Assert.IsFalse(emReader.IsStartState(index, str));
+            Assert.IsFalse(emReader.IsFinalState(index, str));
         }
     }
 }
