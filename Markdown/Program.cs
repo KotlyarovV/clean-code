@@ -34,7 +34,7 @@ namespace Markdown
             if (result.HasErrors)
             {
                 Console.WriteLine("One of the parameters was missed!");
-                return; ;
+                return;
             }
 
             var arguments = parser.Object;
