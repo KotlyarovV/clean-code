@@ -10,5 +10,5 @@ Frequency=1753830 Hz, Resolution=570.1807 ns, Timer=TSC
 ```
 |                   Method |     Mean |     Error |    StdDev |
 |------------------------- |---------:|----------:|----------:|
-|    TestMarkDownStringBig | 2.558 ms | 0.0143 ms | 0.0119 ms |
-| TestMarkDownStringBigger | 8.374 ms | 0.1366 ms | 0.1141 ms |
+|    TestMarkDownStringBig | 2.626 ms | 0.0523 ms | 0.0716 ms |
+| TestMarkDownStringBigger | 8.608 ms | 0.1891 ms | 0.2459 ms |

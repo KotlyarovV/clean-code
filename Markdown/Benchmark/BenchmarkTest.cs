@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace Markdown.Benchmark
 {
-        [TestFixture]
+        [TestFixture, Explicit]
         class BenchmarkTest
         {
             [Test]
