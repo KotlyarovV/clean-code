@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Markdown.Readers;
+﻿using Markdown.Readers;
 using NUnit.Framework;
 
 namespace Markdown.Tests
@@ -12,9 +11,8 @@ namespace Markdown.Tests
         [SetUp]
         public void SetUp()
         {
-            var tokens = new List<Token>();
-            var strongReader = new StrongReader(tokens);
-            emReader = new EmReader(tokens, strongReader);
+            var strongReader = new StrongReader();
+            emReader = new EmReader(strongReader);
         }
 
         [TestCase("_a_", 0, TestName = "start_of_string_is_start_of_token")]

@@ -8,24 +8,30 @@ namespace Markdown
     public class Md
     {
         private readonly List<Reader> readers = new List<Reader>();
-        private readonly List<Token> tokens = new List<Token>();
-
+        
         public Md()
         {
-            var strongReader = new StrongReader(tokens);
-            var emReader = new EmReader(tokens, strongReader);
+            var strongReader = new StrongReader();
+            var emReader = new EmReader(strongReader);
 
             readers.Add(emReader);
             readers.Add(strongReader);
         }
 
 
-        private void MakeTokens(string text)
+        private List<Token> GetTokens(string text)
         {
+            var tokens = new List<Token>();
             for (var i = 0; i < text.Length; i++)
             {
-                readers.ForEach(reader => reader.ReadChar(i, text));
+                readers.ForEach(reader =>
+                {
+                    var token = reader.ReadChar(i, text);
+                    if (token != null)
+                        tokens.Add(token);
+                });
             }
+            return tokens;
         }
 
         private static IEnumerable<Tag> GetTags(List<Token> tokens)
@@ -61,7 +67,7 @@ namespace Markdown
 
         public string RenderToHtml(string markdown)
         {
-            MakeTokens(markdown);
+            var tokens = GetTokens(markdown);
             var tags = GetTags(tokens);
             var tagsWithoutNested = DeleteNested(tags, TokenType.EmTag, TokenType.StrongTag);
 

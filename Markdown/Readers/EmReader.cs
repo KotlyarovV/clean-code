@@ -1,21 +1,15 @@
-﻿using System.Collections.Generic;
-
-
-namespace Markdown.Readers
+﻿namespace Markdown.Readers
 {
     class EmReader : Reader
     {
         protected override TokenType TokenType { get; } = TokenType.EmTag;
 
-        protected sealed override List<Token> Tokens { get; set; }
-
         private static readonly int lengthOfElement = Tag.MardownRepresentation[TokenType.EmTag].Length;
 
         private readonly StrongReader strongReader;
 
-        public EmReader(List<Token> tokens, StrongReader strongReader)
+        public EmReader(StrongReader strongReader)
         {
-            Tokens = tokens;
             this.strongReader = strongReader;
         }
 

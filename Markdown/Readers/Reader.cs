@@ -13,9 +13,7 @@ namespace Markdown.Readers
         protected Stack<int> LeftBoards { get; set; } = new Stack<int>();
 
         protected abstract TokenType TokenType { get; }
-
-        protected abstract List<Token> Tokens { get; set; }
-
+        
         protected const char Underscore = '_';
 
         public static bool IsEscapedSymbol(int index, string str) => index > 0 && str[index - 1] == '\\';
@@ -34,7 +32,7 @@ namespace Markdown.Readers
 
         protected static bool EndOfString(int index, string str) => index == str.Length - 1;
 
-        public void ReadChar(int index, string str)
+        public Token ReadChar(int index, string str)
         {
             if (IsStartState(index, str))
             {
@@ -44,10 +42,10 @@ namespace Markdown.Readers
 
             else if (IsFinalState(index, str))
             {
-                Tokens.Add(new Token(TokenType, LeftBoards.Pop(), index));
                 IsActive = false;
+                return new Token(TokenType, LeftBoards.Pop(), index);
             }
-
+            return null;
         }
     }
 }

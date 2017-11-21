@@ -1,24 +1,14 @@
-﻿using System.Collections.Generic;
-
-
-namespace Markdown.Readers
+﻿namespace Markdown.Readers
 {
     class StrongReader : Reader
     {
         protected override TokenType TokenType { get; } = TokenType.StrongTag;
-
-        protected sealed override List<Token> Tokens { get; set; }
 
         private static bool AtInEndOfString(int index, string str) => index + 1 >= str.Length;
 
         private static readonly int lengthOfElement = Tag.MardownRepresentation[TokenType.StrongTag].Length;
 
         private static bool HasSymbolAfterElement(int index, string str) => index + lengthOfElement < str.Length;
-
-        public StrongReader(List<Token> tokens)
-        {
-            Tokens = tokens;
-        }
 
         public override bool IsStartState(int index, string str)
         {
