@@ -8,7 +8,7 @@ namespace Markdown.Readers
 
         public abstract bool IsFinalState(int index, string str);
 
-        public bool IsActive { get; set; }
+        public bool IsActive { get; private set; }
 
         protected Stack<int> LeftBoards { get; set; } = new Stack<int>();
 
@@ -16,10 +16,15 @@ namespace Markdown.Readers
 
         protected abstract List<Token> Tokens { get; set; }
 
-        // логика проверки экранированных символов дублируется здесь и в Md
-        protected static bool Screened(int index, string str) => index > 0 && str[index - 1] == '\\';
+        protected const char Underscore = '_';
+
+        public static bool IsEscapedSymbol(int index, string str) => index > 0 && str[index - 1] == '\\';
 
         protected static bool SymbolAfterIndex(int index, string str, char symbol) => index < str.Length - 1 && str[index + 1] == symbol;
+
+        protected static bool WhiteSpaceAfterIndex(int index, string str) => SymbolAfterIndex(index, str, ' ') || SymbolAfterIndex(index, str, '\t');
+
+        protected static bool WhiteSpaceBeforeIndex(int index, string str) => SymbolBeforeIndex(index, str, ' ') || SymbolBeforeIndex(index, str, '\t');
 
         protected static bool SymbolBeforeIndex(int index, string str, char symbol) => index > 0 && str[index - 1] == symbol;
 
@@ -29,8 +34,7 @@ namespace Markdown.Readers
 
         protected static bool EndOfString(int index, string str) => index == str.Length - 1;
 
-        // virtual method is never overriden
-        public virtual void ReadChar(int index, string str)
+        public void ReadChar(int index, string str)
         {
             if (IsStartState(index, str))
             {

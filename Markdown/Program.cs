@@ -1,57 +1,71 @@
-﻿﻿using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
+using Fclp;
 
 namespace Markdown
 {
-	// Будет лучше воспользоваться парсером коммандной строки
-	// FluentCommandLineParser, CommandLine, и т.д.
-	class Program
-	{
-	    private static readonly string[] launchProperties = { "--in", "--out" };
+    class Program
+    {
 
-		static void Main(string[] args)
-		{
-            var launchPropertiesValues = new Dictionary<string, string>();
-		    string fileInn;
-            
-            for (var i = 0; i < args.Length; i++)
+        static Tuple<string, string, ICommandLineParserResult> ParseArgs(string[] args)
+        {
+            var parser = new FluentCommandLineParser();
+
+            var fileOutName = string.Empty;
+            var fileInName = string.Empty;
+
+            parser.Setup<string>("out")
+                .Callback(str => fileOutName = str)
+                .Required();
+
+            parser.Setup<string>("in")
+                .Callback(str => fileInName = str)
+                .Required();
+
+            var result = parser.Parse(args);
+            return Tuple.Create(fileInName, fileOutName, result);
+        }
+
+        static void Main(string[] args)
+        {
+            var parsingResult = ParseArgs(args);
+
+            var result = parsingResult.Item3;
+            if (result.HasErrors)
             {
-                if (launchProperties.Contains(args[i]))
-                    launchPropertiesValues[args[i]] = args[i + 1];
+                Console.WriteLine("One of the parameters was missed!");
+                return; ;
             }
 
-		    try
-		    {
-                fileInn = File.ReadAllText(launchPropertiesValues["--in"]);
-		    }
-		    catch 
-		    {
-		        Console.WriteLine("No in file");
-                return;
-		    }
+            var fileOutName = parsingResult.Item2;
+            var fileInName = parsingResult.Item1;
 
-		    string mdLine;
-		    try
-		    {
+            string fileIn;
+
+            try
+            {
+                fileIn = File.ReadAllText(fileInName);
+            }
+            catch
+            {
+                Console.WriteLine("No in file");
+                return;
+            }
+
+            string mdLine;
+            try
+            {
                 var md = new Md();
-		        mdLine = md.RenderToHtml(fileInn);
-		    }
-		    catch
-		    {
-			    // было бы круто объяснить пользователю, в каком именно месте ошибка
-		        Console.WriteLine("There was an error in parsing.");
+                mdLine = md.RenderToHtml(fileIn);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("There was an error in parsing.");
+                Console.WriteLine(e.Message);
                 return;
-		    }
+            }
 
-		    if (!launchPropertiesValues.ContainsKey("--out"))
-		    {
-		        Console.WriteLine("Out file was not specified!");
-                return;
-		    }
-            
-		    File.WriteAllText(launchPropertiesValues["--out"], mdLine);
+            File.WriteAllText(fileOutName, mdLine);
         }
-	}
+    }
 }
