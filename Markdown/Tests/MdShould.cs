@@ -40,19 +40,17 @@ namespace Markdown.Tests
         [Test]
         public void TestMethod()
         {
-            BenchmarkRunner.Run<MarkDownBenchmark>();
-            /*var result = BenchmarkRunner.Run<MarkDownBenchmark>();
-            var a = result.Reports[0].ResultStatistics.Median;
-            var b = result.Reports[1].ResultStatistics.Median;
-            Assert.AreEqual(a, b);
-            */
+            var result = BenchmarkRunner.Run<MarkDownBenchmark>();
+            var time1 = result.Reports[0].ResultStatistics.Median;
+            var time2 = result.Reports[1].ResultStatistics.Median;
+            Assert.True(time1 * Math.Pow(MarkDownBenchmark.MagnificationFactor, 2) > time2);
         }
     }
 
 
     public class MarkDownBenchmark
     {
-        public static string GetGreatString(string str, int i)
+        private static string GetGreatString(string str, int i)
         {
             var stringBuilder = new StringBuilder(str);
             Enumerable.Range(0, i).ForEach((a) => stringBuilder.Append(str));
@@ -60,37 +58,32 @@ namespace Markdown.Tests
         }
 
         private string markDownString;
-        private string markDownString1000;
-        private string markDownString2000;
-        private string markDownString5000;
-        private Md Md;
+        private string markDownStringBig;
+        private string markDownStringBigger;
+
+        private int repetitionsNumber = 100;
+        public static readonly int MagnificationFactor = 2;
+        private Md md;
 
         [GlobalSetup]
         public void GlobalSetUp()
         {
             markDownString = "_a _b_ b_ digits_aa_a __aaaa__b__bbb__ _a __b__ b_";
-            markDownString1000 = GetGreatString(markDownString, 1000);
-            markDownString2000 = GetGreatString(markDownString, 2000);
-            markDownString5000 = GetGreatString(markDownString, 5000);
-            Md = new Md();
+            markDownStringBig = GetGreatString(markDownString, repetitionsNumber);
+            markDownStringBigger = GetGreatString(markDownString, repetitionsNumber * MagnificationFactor);
+            md = new Md();
         }
         
-        [Benchmark(Description = "TestMarkDownString1000")]
-        public string TestMarkDownString1000()
+        [Benchmark(Description = "TestMarkDownStringBig")]
+        public string TestMarkDownStringBig()
         {
-            return Md.RenderToHtml(markDownString1000);
+            return md.RenderToHtml(markDownStringBig);
         }
         
-        [Benchmark(Description = "TestMarkDownString2000")]
-        public string TestMarkDownString2000()
+        [Benchmark(Description = "TestMarkDownStringBigger")]
+        public string TestMarkDownStringBigger()
         {
-            return Md.RenderToHtml(markDownString2000);
-        }
-
-        [Benchmark(Description = "TestMarkDownString5000")]
-        public string TestMarkDownString5000()
-        {
-            return Md.RenderToHtml(markDownString5000);
+            return md.RenderToHtml(markDownStringBigger);
         }
     }
 
