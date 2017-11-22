@@ -12,7 +12,7 @@ namespace Markdown
         public Md()
         {
             var strongReader = new StrongReader();
-            var emReader = new EmReader(strongReader);
+            var emReader = new EmReader();
 
             readers.Add(emReader);
             readers.Add(strongReader);

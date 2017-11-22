@@ -11,8 +11,7 @@ namespace Markdown.Tests
         [SetUp]
         public void SetUp()
         {
-            var strongReader = new StrongReader();
-            emReader = new EmReader(strongReader);
+            emReader = new EmReader();
         }
 
         [TestCase("_a_", 0, TestName = "start_of_string_is_start_of_token")]
