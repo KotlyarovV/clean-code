@@ -8,8 +8,6 @@ namespace Markdown.Readers
 
         public abstract bool IsFinalState(int index, string str);
 
-        public bool IsActive { get; private set; }
-
         protected Stack<int> LeftBoards { get; set; } = new Stack<int>();
 
         protected abstract TokenType TokenType { get; }
@@ -37,12 +35,10 @@ namespace Markdown.Readers
             if (IsStartState(index, str))
             {
                 LeftBoards.Push(index);
-                IsActive = true;
             }
 
             else if (IsFinalState(index, str))
             {
-                IsActive = false;
                 return new Token(TokenType, LeftBoards.Pop(), index);
             }
             return null;
