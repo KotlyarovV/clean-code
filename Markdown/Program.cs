@@ -14,6 +14,8 @@ namespace Markdown
     {
         static Md md = new Md();
 
+        private const string HelpText = "Prinat name of input file with --in parameter and outputfile with --out parameter."; 
+
         static void PrepareParser(FluentCommandLineParser<ApplicationArguments> parser)
         {
             parser.Setup(arg => arg.FileInName)
@@ -23,6 +25,24 @@ namespace Markdown
             parser.Setup(arg => arg.FileOutName)
                 .As("out")
                 .Required();
+
+            parser.SetupHelp("?", "help")
+                .Callback(() => Console.WriteLine(HelpText))
+                .UseForEmptyArgs();
+        }
+
+        static string GetFromFile(string fileName)
+        {
+            string fileIn = null;
+            try
+            {
+                fileIn = File.ReadAllText(fileName);
+            }
+            catch
+            {
+                Console.WriteLine("No input file");
+            }
+            return fileIn;
         }
 
         static void Main(string[] args)
@@ -30,26 +50,19 @@ namespace Markdown
             var parser = new FluentCommandLineParser<ApplicationArguments>();
             PrepareParser(parser);
             var result = parser.Parse(args);
-
+            
             if (result.HasErrors)
             {
                 Console.WriteLine("One of the parameters was missed!");
                 return;
             }
-
+            if (result.EmptyArgs || result.HelpCalled) return;
+            
             var arguments = parser.Object;
 
-            string fileIn;
+            var fileIn = GetFromFile(arguments.FileInName);
 
-            try
-            {
-                fileIn = File.ReadAllText(arguments.FileInName);
-            }
-            catch
-            {
-                Console.WriteLine("No input file");
-                return;
-            }
+            if (fileIn == null) return;
 
             string htmlLine;
             try
