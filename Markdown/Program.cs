@@ -31,7 +31,7 @@ namespace Markdown
                 .UseForEmptyArgs();
         }
 
-        static string GetFromFile(string fileName)
+        static string GetStringFromFile(string fileName)
         {
             string fileIn = null;
             try
@@ -60,7 +60,7 @@ namespace Markdown
             
             var arguments = parser.Object;
 
-            var fileIn = GetFromFile(arguments.FileInName);
+            var fileIn = GetStringFromFile(arguments.FileInName);
 
             if (fileIn == null) return;
 
